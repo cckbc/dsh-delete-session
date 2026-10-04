@@ -8,13 +8,14 @@ Out of the box a session's row menu offers **Pin / Rename / Fork / Archive** —
 
 ## Screenshots
 
-**Delete session** is appended to the row's `…` menu — the hover trash button on the row is the same action — and to delete several at once there is a trash button above the workspace list, **Delete sessions in bulk**:
+**Delete session** is appended to the row's `…` menu — the hover trash button on the row is the same action — and to delete several at once there is a trash button above the workspace list:
 
-![The bulk delete button above the workspace list, showing its Delete sessions in bulk tooltip](images/01-menu.png)
-
-The row menu, with **Delete session** in red at the end:
-
-![The row menu open: Pin session, Rename, Fork session, Archive session, Delete session](images/04-single.png)
+<table>
+<tr>
+<td width="45%"><img src="images/01-menu.png" alt="The bulk delete button above the workspace list, showing its Delete sessions in bulk tooltip"><br><b>Bulk</b>: the trash button above the workspace list, <b>Delete sessions in bulk</b></td>
+<td width="55%"><img src="images/04-single.png" alt="The row menu open: Pin session, Rename, Fork session, Archive session, Delete session"><br><b>Single</b>: the row menu, with <b>Delete session</b> in red at the end</td>
+</tr>
+</table>
 
 The bulk button opens a picker holding every session:
 
