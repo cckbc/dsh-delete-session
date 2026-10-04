@@ -24,7 +24,7 @@ Either way it asks for confirmation first; tick “Don't ask again” and later 
 
 ![The recycle bin page in Settings, with three sessions ticked](images/03-trash.png)
 
-The **Keep for** period is one number for the whole bin, 15 days by default, and shortening it asks first because entries already past the new window are deleted on the spot:
+The **Keep for** period is one number for the whole bin, 15 days by default. It only asks first when the new period would really take rows with it — those are already past the new window and are deleted on the spot; a bin with nothing past it changes straight away:
 
 ![The Keep for menu open, offering 7, 15 and 30 days](images/06-keep.png)
 
@@ -87,7 +87,7 @@ The app's own notice: **plugins have no automatic update — to upgrade, uninsta
 - **“Delete” and “Empty recycle bin” really delete**: no OS recycle bin, no undo. Back up anything you care about first.
 - **No cascade cleanup**: a session's attachments (`<DSH_HOME>/attachments`), AgentTeams working directories and similar derived data are outside the bin.
 - **One class of session is the exception**: a cold session whose log never recorded a working directory is skipped by the app's own list, so a restart will not show it either — the toast says so honestly.
-- **A restore does not bring back pinned/archived state**; the retention period is 15 days by default and can be set to 7 / 15 / 30 days in **Settings → Recycle bin**. It is one number for the whole bin: every entry expires that long after its own deletion time, and shortening it asks first, because entries already past the new window are deleted on the spot.
+- **A restore does not bring back pinned/archived state**; the retention period is 15 days by default and can be set to 7 / 15 / 30 days in **Settings → Recycle bin**. It is one number for the whole bin: every entry expires that long after its own deletion time, and shortening the period asks first only when rows would really go, because those are already past the new window and are deleted on the spot.
 - **The list the running app keeps in memory is only rebuilt at the next launch**: the sidebar row is governed by the plugin's own hidden list and `workspace.json` on disk is already updated, but the running app still remembers the old state.
 - **Verified on Windows + 0.2.0-rc.2 only**: macOS/Linux and other Harness versions are untested.
 - **A duplicated id is moved from the first match only**: the delete walks `<DSH_HOME>/sessions/` for the workspace directory that holds this id and takes the first hit; if the same id somehow exists under two workspaces (a hand-copied directory, say), the second one is left untouched. The id is dropped from every workspace's account so no phantom row appears after a restart.
