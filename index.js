@@ -10,9 +10,14 @@
  *
  * - `POST …/session` with `action: 'delete'` MOVES the session's log directory
  *   into `<DSH_HOME>/dsh-trash/<stamp>-<id>/log/` instead of destroying it, and
- *   records what it was (title, working directory, size, deletion time, expiry)
+ *   records what it was (title, working directory, size, deletion time)
  *   in `<DSH_HOME>/dsh-trash/index.json`;
- * - `action: 'list'` reports the bin, purging entries whose retention expired;
+ * - `action: 'list'` reports the bin, purging entries past the retention window;
+ * - `action: 'retention'` reads or writes that window, which is ONE number for
+ *   the whole bin: every entry is measured as "deleted at + the window in
+ *   force", so changing it moves every deadline in the bin, not just the next
+ *   delete's. Nothing is destroyed silently by that: an entry the new window
+ *   already passed is removed as part of the change, and the page asks first;
  * - `action: 'restore'` moves a log directory back to the workspace it came
  *   from and re-accounts the session in the workspace registry state;
  * - `action: 'purge'` and `action: 'empty'` delete permanently, on request.
@@ -70,6 +75,18 @@ const MAX_VERIFY_IDS = 500;
 
 /** Default retention: how long a trashed session stays restorable. */
 const DEFAULT_RETENTION_DAYS = 15;
+
+/**
+ * The retention a caller may set, in days.
+ *
+ * A range rather than a list of three: the page offers 7 / 15 / 30 because that
+ * is what a person actually picks, but nothing here is tied to that menu — a
+ * profile configured by hand, or a later page with a "never" switch, is the same
+ * request. The ceiling is a decade, which is past any use and still a number a
+ * multiplication cannot turn into a date that is not a date.
+ */
+const MIN_RETENTION_DAYS = 1;
+const MAX_RETENTION_DAYS = 3650;
 
 /** How often the running host re-checks for expired entries. */
 const SWEEP_INTERVAL_MS = 60 * 60 * 1000;
@@ -378,6 +395,79 @@ async function findSessionDirectory(home, sessionId) {
     }
   }
   return undefined;
+}
+
+/**
+ * When one entry falls due, under a given window.
+ *
+ * The stored `expiresAt` is a convenience, not the rule: an entry expires a
+ * window after it was deleted, and the window is whatever the bin holds now.
+ * That is what makes "保留期" one setting instead of a number each entry happens
+ * to carry — shortening it moves every deadline in the bin, lengthening it
+ * rescues everything the old window had not yet taken.
+ *
+ * An entry with no deletion time of its own (none is written without one, but a
+ * hand-edited ledger is not this plugin's to trust) falls back to the deadline
+ * it was stored with, and one with neither never falls due by arithmetic — it is
+ * removed by an explicit purge, which is the only way this must never lose data.
+ *
+ * @param entry - the index entry.
+ * @param retentionDays - the window in force.
+ * @returns the deadline in ms, or `Infinity` when the entry cannot be dated.
+ */
+function entryDeadline(entry, retentionDays) {
+  const stamped = Number(entry.trashedAtMs);
+  if (Number.isFinite(stamped) && stamped > 0) return stamped + retentionDays * DAY_MS;
+  const parsed = Date.parse(typeof entry.trashedAt === 'string' ? entry.trashedAt : '');
+  if (Number.isFinite(parsed)) return parsed + retentionDays * DAY_MS;
+  const stored = Number(entry.expiresAt);
+  return Number.isFinite(stored) && stored > 0 ? stored : Number.POSITIVE_INFINITY;
+}
+
+/**
+ * Set how long a session stays restorable, for the whole bin at once.
+ *
+ * The number lives in the bin's own index, and it is the only thing read: an
+ * entry expires a window after it was deleted (`entryDeadline`), so this one
+ * write moves every deadline in the bin. Entries the new window has already
+ * passed are removed here rather than left on screen until the next listing, and
+ * are reported back, because the page asks before it calls this and then says
+ * what happened.
+ *
+ * A stored `expiresAt` is restamped and its `meta.json` rewritten for the same
+ * reason: the ledger is read by people too, and one that disagrees with the
+ * arithmetic everything else uses is worse than no field at all.
+ *
+ * @param home - DSH home directory.
+ * @param days - the new retention, already validated.
+ * @returns the window, what it replaced, and what the change removed.
+ */
+async function setRetention(home, days) {
+  const index = await readIndex(home);
+  const previousDays = index.retentionDays;
+  index.retentionDays = days;
+  const now = Date.now();
+  const keep = [];
+  const purged = [];
+  let restamped = 0;
+  for (const entry of index.entries) {
+    const expiresAt = entryDeadline(entry, days);
+    if (expiresAt <= now) {
+      await removeEntryPayload(home, entry);
+      purged.push(entry.sessionId);
+      continue;
+    }
+    if (Number(entry.expiresAt) !== expiresAt || entry.retentionDays !== days) {
+      entry.expiresAt = Number.isFinite(expiresAt) ? expiresAt : entry.expiresAt;
+      entry.retentionDays = days;
+      await refreshEntryMeta(home, entry);
+      restamped += 1;
+    }
+    keep.push(entry);
+  }
+  index.entries = keep;
+  await writeIndex(home, index);
+  return { retentionDays: days, previousDays, purged, restamped };
 }
 
 /** Absolute path of the trash index. */
@@ -862,7 +952,12 @@ async function removeEntryPayload(home, entry) {
 }
 
 /**
- * Purge every entry whose retention has expired.
+ * Purge every entry past the retention window.
+ *
+ * The window is read here and applied to each entry's own deletion time, so the
+ * sweep and the setting can never disagree: the deadline is arithmetic, not a
+ * field someone might have written a different window into.
+ *
  * @param home - DSH home directory.
  * @returns the ids that were purged.
  */
@@ -872,8 +967,7 @@ async function purgeExpired(home) {
   const keep = [];
   const purged = [];
   for (const entry of index.entries) {
-    const expiresAt = Number(entry.expiresAt);
-    if (Number.isFinite(expiresAt) && expiresAt <= now) {
+    if (entryDeadline(entry, index.retentionDays) <= now) {
       await removeEntryPayload(home, entry);
       purged.push(entry.sessionId);
       continue;
@@ -1282,15 +1376,22 @@ async function applyAction(home, action, sessionId, request, host) {
     const now = Date.now();
     return {
       retentionDays: index.retentionDays,
-      entries: index.entries.map((entry) => ({
-        sessionId: entry.sessionId,
-        title: entry.title,
-        cwd: entry.cwd,
-        bytes: entry.bytes,
-        trashedAt: entry.trashedAt,
-        expiresAt: entry.expiresAt,
-        daysLeft: Math.max(0, Math.ceil((Number(entry.expiresAt) - now) / DAY_MS)),
-      })),
+      entries: index.entries.map((entry) => {
+        // Reported from the window in force, not from the stored field: the
+        // table's "remaining" column is the same arithmetic the sweep purges on,
+        // so what the page shows and what happens next cannot drift apart.
+        const expiresAt = entryDeadline(entry, index.retentionDays);
+        const daysLeft = Number.isFinite(expiresAt) ? Math.max(0, Math.ceil((expiresAt - now) / DAY_MS)) : null;
+        return {
+          sessionId: entry.sessionId,
+          title: entry.title,
+          cwd: entry.cwd,
+          bytes: entry.bytes,
+          trashedAt: entry.trashedAt,
+          expiresAt: Number.isFinite(expiresAt) ? expiresAt : null,
+          daysLeft,
+        };
+      }),
       purged,
     };
   }
@@ -1307,6 +1408,25 @@ async function applyAction(home, action, sessionId, request, host) {
   }
   if (action === 'verify') {
     return { missing: await verifiedMissing(home, request?.sessionIds) };
+  }
+  /*
+   * The retention window, read or written. A request with no `days` is a read,
+   * which is how the page learns the number the confirmations should quote
+   * instead of carrying its own copy of the default. A write reports what it
+   * replaced and what it removed, because shortening the window can take entries
+   * with it and the page has to say so rather than let rows vanish.
+   */
+  if (action === 'retention') {
+    const requested = request?.['days'];
+    if (requested === undefined) {
+      const index = await readIndex(home);
+      return { retentionDays: index.retentionDays };
+    }
+    const days = Number(requested);
+    if (!Number.isInteger(days) || days < MIN_RETENTION_DAYS || days > MAX_RETENTION_DAYS) {
+      throw new TrashError(`retention must be a whole number of days between ${String(MIN_RETENTION_DAYS)} and ${String(MAX_RETENTION_DAYS)}`, 400, 'invalid-retention');
+    }
+    return setRetention(home, days);
   }
   if (sessionId === '') throw new TrashError('a valid sessionId is required', 400, 'invalid-session');
   // Deleting is deleting. The Host's archive set is the user's own
@@ -1387,7 +1507,7 @@ export function apply(ctx) {
         // must always be named explicitly.
         const action = typeof payload['action'] === 'string' && payload['action'] !== '' ? payload['action'] : 'list';
         const sessionId = typeof payload['sessionId'] === 'string' ? payload['sessionId'].trim() : '';
-        if (action !== 'list' && action !== 'empty' && action !== 'verify' && !SESSION_ID_PATTERN.test(sessionId)) {
+        if (action !== 'list' && action !== 'empty' && action !== 'verify' && action !== 'retention' && !SESSION_ID_PATTERN.test(sessionId)) {
           reply(400, { error: 'a valid sessionId is required' });
           return;
         }

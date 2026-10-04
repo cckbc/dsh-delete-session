@@ -2,30 +2,43 @@
 
 **A real “Delete session” for the DeepSeek Harness desktop app.**
 
-Out of the box a session's row menu offers **Pin / Rename / Fork / Archive** — and archiving only files a session away into the archive list, it is still there. This plugin adds delete: the session moves into a **recycle bin** that keeps it for **15 days**, restorable at any time from **Settings → Recycle bin**. The files are only really removed on expiry, or when you press **Delete permanently** / **Empty recycle bin**.
+Out of the box a session's row menu offers **Pin / Rename / Fork / Archive** — and archiving only files a session away into the archive list, it is still there. This plugin adds delete: the session moves into a **recycle bin** that keeps it for **15 days** by default (7 / 15 / 30, changeable in Settings), restorable at any time from **Settings → Recycle bin**. The files are only really removed on expiry, or when you press **Delete** / **Empty recycle bin**. Several sessions at once go through the **bulk delete** button above the sidebar's workspace list.
 
 [中文说明 →](README.zh.md)
 
 ## Screenshots
 
-**Delete session** is appended to the row's `…` menu; the hover trash button is the same action:
+**Delete session** is appended to the row's `…` menu — the hover trash button on the row is the same action — and to delete several at once there is a trash button above the workspace list, **Delete sessions in bulk**:
 
-![“Delete session” in the session row menu](images/01-menu.jpg)
+![The bulk delete button above the workspace list, showing its Delete sessions in bulk tooltip](images/01-menu.png)
 
-It asks for confirmation first; tick “Don't ask again” and later deletions go straight to the bin, with a switch in Settings to bring the question back:
+The row menu, with **Delete session** in red at the end:
 
-![Confirm dialog: “问候大肥鱼” moves to the recycle bin and is permanently deleted after 15 days](images/02-confirm.jpg)
+![The row menu open: Pin session, Rename, Fork session, Archive session, Delete session](images/04-single.png)
 
-**Settings → Recycle bin** shows one row per session — title | workspace | deleted at | days left | [Restore] [Delete permanently] — plus [Empty recycle bin]:
+The bulk button opens a picker holding every session:
 
-![The recycle bin page in Settings](images/03-trash.jpg)
+![The bulk delete picker: three of ten sessions ticked, with Move to recycle bin (3) at the bottom right](images/05-picker.png)
+
+Either way it asks for confirmation first; tick “Don't ask again” and later deletions go straight to the bin, with a switch in Settings to bring the question back:
+
+![Confirm dialog: 3 selected sessions move to the recycle bin and are permanently deleted after 7 days](images/02-confirm.png)
+
+**Settings → Recycle bin** shows one row per session — title | folder | deleted at | days left | [Restore] | [Delete] — plus [Empty recycle bin]. Tick the sessions you want and the restore/delete buttons appear in the table's own header row, so a batch acts on exactly what is ticked:
+
+![The recycle bin page in Settings, with three sessions ticked](images/03-trash.png)
+
+The **Keep for** period is one number for the whole bin, 15 days by default, and shortening it asks first because entries already past the new window are deleted on the spot:
+
+![The Keep for menu open, offering 7, 15 and 30 days](images/06-keep.png)
 
 ## Features
 
 - **Deleting is reversible**: a delete is a move — the session log and that name's cache travel into the bin, and a restore puts them back file by file, title and working directory included.
 - **The row leaves the sidebar immediately**, with no app restart, and no empty group appears at the bottom.
 - **Deleting the session you are looking at** hands the main view to a fresh session in the same workspace instead of leaving you on one that no longer exists.
-- **Two entry points**: the row menu and the hover button, with identical behaviour; the confirm dialog can be turned off and back on.
+- **Three entry points**: the row menu, the hover button, and the bulk button above the workspace list. All of them ask the same question, and the question can be switched off and back on in Settings.
+- **Batch works end to end**: delete as many sessions as you like in one go, and the bin restores or deletes them in bulk from the table header.
 - **Chinese and English**, following the app's language.
 - **The toasts do not lie**: only when the app really has the row back does a restore say “it is back in the list”; otherwise it says honestly that it returns after a restart.
 
@@ -75,10 +88,10 @@ The app's own notice: **plugins have no automatic update — to upgrade, uninsta
 ## Problems and limits
 
 - **This is not a feature the app ships — it is grafted onto the app**: there is no “delete session” in the app, and no delete API for plugins. Removing a row, and putting it back, means editing things the app keeps internally: which workspace a session belongs to, the sidebar's session list, the settings page's navigation. DeepSeek has published none of that and promises none of it stays the same, so a Harness update can break the plugin — worst case a delete or restore errors out or does nothing (the session logs stay on disk).
-- **“Delete permanently” and “Empty recycle bin” really delete**: no OS recycle bin, no undo. Back up anything you care about first.
+- **“Delete” and “Empty recycle bin” really delete**: no OS recycle bin, no undo. Back up anything you care about first.
 - **No cascade cleanup**: a session's attachments (`<DSH_HOME>/attachments`), AgentTeams working directories and similar derived data are outside the bin.
 - **One class of session is the exception**: a cold session whose log never recorded a working directory is skipped by the app's own list, so a restart will not show it either — the toast says so honestly.
-- **A restore does not bring back pinned/archived state**; the retention period is fixed at 15 days (it lives in `retentionDays` in `index.js`, with no UI setting yet).
+- **A restore does not bring back pinned/archived state**; the retention period is 15 days by default and can be set to 7 / 15 / 30 days in **Settings → Recycle bin**. It is one number for the whole bin: every entry expires that long after its own deletion time, and shortening it asks first, because entries already past the new window are deleted on the spot.
 - **The list the running app keeps in memory is only rebuilt at the next launch**: the sidebar row is governed by the plugin's own hidden list and `workspace.json` on disk is already updated, but the running app still remembers the old state.
 - **Verified on Windows + 0.2.0-rc.2 only**: macOS/Linux and other Harness versions are untested.
 - **A duplicated id is moved from the first match only**: the delete walks `<DSH_HOME>/sessions/` for the workspace directory that holds this id and takes the first hit; if the same id somehow exists under two workspaces (a hand-copied directory, say), the second one is left untouched. The id is dropped from every workspace's account so no phantom row appears after a restart.

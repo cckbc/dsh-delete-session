@@ -47,6 +47,7 @@
     "client.js",
     "cordis.patch.yml",
     "icon.png",
+    "images/*.png",
     "locale/*.json",
     "README.md",
     "README.zh.md",
