@@ -1,3 +1,3 @@
 - insert:
     - id: delete-session
-      name: '@cckbc/dsh-delete-session'
+      name: '@cckbc/dsh-session-recycle-bin'

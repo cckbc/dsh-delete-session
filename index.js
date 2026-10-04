@@ -41,7 +41,7 @@
  * Every path is derived from a validated session id, so a crafted request cannot
  * walk out of the sessions root.
  *
- * @module @cckbc/dsh-delete-session
+ * @module @cckbc/dsh-session-recycle-bin
  */
 import { readFileSync } from 'node:fs';
 import { existsSync } from 'node:fs';
