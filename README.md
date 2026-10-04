@@ -4,8 +4,6 @@
 
 Out of the box a session's row menu offers **Pin / Rename / Fork / Archive** — and archiving only files a session away into the archive list, it is still there. This plugin adds delete: the session moves into a **recycle bin** that keeps it for **15 days**, restorable at any time from **Settings → Recycle bin**. The files are only really removed on expiry, or when you press **Delete permanently** / **Empty recycle bin**.
 
-Deleting is deleting and archiving is archiving: the plugin never touches the archive list, and never changes a session's pinned/archived state.
-
 [中文说明 →](README.zh.md)
 
 ## Screenshots
