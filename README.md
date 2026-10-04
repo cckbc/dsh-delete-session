@@ -20,7 +20,7 @@ Either way it asks for confirmation first; tick “Don't ask again” and later 
 
 ![Confirm dialog: 3 selected sessions move to the recycle bin and are permanently deleted after 7 days](images/02-confirm.png)
 
-**Settings → Recycle bin** shows one row per session — title | folder | deleted at | days left | [Restore] | [Delete] — plus [Empty recycle bin]. Tick the sessions you want and the restore/delete buttons appear in the table's own header row, so a batch acts on exactly what is ticked:
+**Settings → Recycle bin** shows the bin as a table: Session | Folder | Deleted | Left | [Restore] | [Delete], plus [Empty recycle bin]. Tick the sessions you want and the restore/delete buttons appear in the table's own header row, so a batch acts on exactly what is ticked:
 
 ![The recycle bin page in Settings, with three sessions ticked](images/03-trash.png)
 
