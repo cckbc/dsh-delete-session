@@ -46,13 +46,13 @@
 ### 从插件页面装
 
 1. 侧栏打开 **插件**，点 **添加插件**；
-2. 填 npm 包名 `@CCKBC/dsh-delete-session`，或者源码的 Git 地址 `github:CCKBC/dsh-delete-session`；
+2. 填源码的 Git 地址 `github:CCKBC/dsh-delete-session`；
 3. 点 **安装** → **立即启用**（新装的插件默认是关着的），然后**完全退出应用再打开**。
 
 ### 用命令装（CLI / Web profile）
 
 ```sh
-dsh plugin --profile web add @CCKBC/dsh-delete-session
+dsh plugin --profile web add github:CCKBC/dsh-delete-session
 # 锁定版本更安全：dsh plugin --profile web add github:CCKBC/dsh-delete-session#<commit-sha>
 ```
 
