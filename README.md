@@ -39,21 +39,21 @@ Requires the **DeepSeek Harness desktop app** (`desktop` profile). Developed and
 
 Just tell the agent inside DSH:
 
-> Install this plugin for me: `github:CCKBC/dsh-delete-session`
+> Install this plugin for me: `github:cckbc/dsh-delete-session`
 
 It installs through the plugin-manager tool, and asks you for approval when it lacks the permission.
 
 ### From the Plugins page
 
 1. Open **Plugins** in the DSH sidebar and choose **Add plugin**;
-2. Enter the Git address `github:CCKBC/dsh-delete-session` for the source;
+2. Enter the Git address `github:cckbc/dsh-delete-session` for the source;
 3. Press **Install**, then **Enable now** (a freshly installed bundle stays switched off) — then **quit the app completely and reopen it**.
 
 ### From the command line (CLI / Web profiles)
 
 ```sh
-dsh plugin --profile web add github:CCKBC/dsh-delete-session
-# pinning a version is safer: dsh plugin --profile web add github:CCKBC/dsh-delete-session#<commit-sha>
+dsh plugin --profile web add github:cckbc/dsh-delete-session
+# pinning a version is safer: dsh plugin --profile web add github:cckbc/dsh-delete-session#<commit-sha>
 ```
 
 The desktop profile cannot be managed this way — the app owns it — so use the Plugins page above.
@@ -61,12 +61,12 @@ The desktop profile cannot be managed this way — the app owns it — so use th
 ### From a local directory
 
 ```sh
-git clone https://github.com/CCKBC/dsh-delete-session.git
+git clone https://github.com/cckbc/dsh-delete-session.git
 ```
 
 Clone it wherever you like (pick a directory you will keep), then **Plugins** → **Add plugin** → enter the **absolute path of that directory**.
 
-> **Keep that directory in place.** A local-path install is a `link:` dependency: the profile's `node_modules/@CCKBC/dsh-delete-session` points at it, so moving or deleting the directory breaks the plugin.
+> **Keep that directory in place.** A local-path install is a `link:` dependency: the profile's `node_modules/@cckbc/dsh-delete-session` points at it, so moving or deleting the directory breaks the plugin.
 
 ### Upgrading and uninstalling
 

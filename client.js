@@ -23,7 +23,7 @@
  * user-visible string goes through the locale seat.
  */
 window.__ModuleLoader__.load({
-  id: '@CCKBC/dsh-delete-session',
+  id: '@cckbc/dsh-delete-session',
   factory(require) {
     const React = require('react');
     /*

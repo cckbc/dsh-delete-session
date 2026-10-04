@@ -39,21 +39,21 @@
 
 直接在 DSH 里对它说：
 
-> 帮我装这个插件：`github:CCKBC/dsh-delete-session`
+> 帮我装这个插件：`github:cckbc/dsh-delete-session`
 
 它会用插件管理工具装好，缺权限时会在对话里向你申请。
 
 ### 从插件页面装
 
 1. 侧栏打开 **插件**，点 **添加插件**；
-2. 填源码的 Git 地址 `github:CCKBC/dsh-delete-session`；
+2. 填源码的 Git 地址 `github:cckbc/dsh-delete-session`；
 3. 点 **安装** → **立即启用**（新装的插件默认是关着的），然后**完全退出应用再打开**。
 
 ### 用命令装（CLI / Web profile）
 
 ```sh
-dsh plugin --profile web add github:CCKBC/dsh-delete-session
-# 锁定版本更安全：dsh plugin --profile web add github:CCKBC/dsh-delete-session#<commit-sha>
+dsh plugin --profile web add github:cckbc/dsh-delete-session
+# 锁定版本更安全：dsh plugin --profile web add github:cckbc/dsh-delete-session#<commit-sha>
 ```
 
 桌面端（`desktop` profile）不能用命令行装——它的 profile 由应用自己管理，请用上面的插件页面。
@@ -61,12 +61,12 @@ dsh plugin --profile web add github:CCKBC/dsh-delete-session
 ### 填本地目录
 
 ```sh
-git clone https://github.com/CCKBC/dsh-delete-session.git
+git clone https://github.com/cckbc/dsh-delete-session.git
 ```
 
 clone 到哪个目录都行（挑一个长期保留的位置），然后在 **插件** → **添加插件** 里填**那个目录的绝对路径**。
 
-> **目录要留着。** 本地路径安装是一条 `link:` 依赖，profile 里的 `node_modules/@CCKBC/dsh-delete-session` 指向它；移动或删除目录，插件就失效了。
+> **目录要留着。** 本地路径安装是一条 `link:` 依赖，profile 里的 `node_modules/@cckbc/dsh-delete-session` 指向它；移动或删除目录，插件就失效了。
 
 ### 升级与卸载
 

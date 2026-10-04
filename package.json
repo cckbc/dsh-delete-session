@@ -1,18 +1,18 @@
 {
-  "name": "@CCKBC/dsh-delete-session",
+  "name": "@cckbc/dsh-delete-session",
   "version": "1.0.4",
   "private": true,
   "type": "module",
   "description": "Adds Delete session to a Session's row menu and hover button: it moves the session into a 15-day recycle bin you can restore from or purge.",
   "license": "MIT",
-  "author": "CCKBC",
-  "homepage": "https://github.com/CCKBC/dsh-delete-session#readme",
+  "author": "cckbc",
+  "homepage": "https://github.com/cckbc/dsh-delete-session#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/CCKBC/dsh-delete-session.git"
+    "url": "git+https://github.com/cckbc/dsh-delete-session.git"
   },
   "bugs": {
-    "url": "https://github.com/CCKBC/dsh-delete-session/issues"
+    "url": "https://github.com/cckbc/dsh-delete-session/issues"
   },
   "keywords": [
     "dsh",
