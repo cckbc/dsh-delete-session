@@ -1,6 +1,6 @@
 {
   "meta": {
-    "title": "Delete Session",
+    "title": "Session Recycle Bin",
     "description": "Adds Delete session to a Session's row menu and hover button: it moves the session into a 15-day recycle bin you can restore from or purge."
   }
 }
