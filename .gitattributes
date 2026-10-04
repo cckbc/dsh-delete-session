@@ -1,0 +1,6 @@
+# Keep every file byte-for-byte as committed.
+#
+# The client half is loaded by the app as a classic script and its exact text
+# matters; the icon is a PNG. Line ending normalisation would rewrite those
+# bytes on checkout, so it is off.
+* -text

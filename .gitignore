@@ -1,0 +1,9 @@
+# This repository has no build step and no dependencies; these are the only
+# things that ever show up next to the sources.
+node_modules/
+*.log
+*.tmp
+*.bak
+.DS_Store
+Thumbs.db
+desktop.ini

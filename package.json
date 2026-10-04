@@ -1,0 +1,55 @@
+{
+  "name": "@CCKBC/dsh-delete-session",
+  "version": "1.0.4",
+  "private": true,
+  "type": "module",
+  "description": "Adds Delete session to a Session's row menu and hover button: it moves the session into a 15-day recycle bin you can restore from or purge.",
+  "license": "MIT",
+  "author": "CCKBC",
+  "homepage": "https://github.com/CCKBC/dsh-delete-session#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CCKBC/dsh-delete-session.git"
+  },
+  "bugs": {
+    "url": "https://github.com/CCKBC/dsh-delete-session/issues"
+  },
+  "keywords": [
+    "dsh",
+    "dsh-plugin",
+    "deepseek-harness",
+    "session",
+    "delete",
+    "recycle-bin"
+  ],
+  "main": "./index.js",
+  "exports": {
+    ".": "./index.js",
+    "./client": "./client.js",
+    "./package.json": "./package.json",
+    "./locale/*.json": "./locale/*.json"
+  },
+  "icon": "./icon.png",
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "immediately": true,
+      "inject": [
+        "@deepseek-ai/dsh-client-ui-primitives"
+      ]
+    }
+  },
+  "files": [
+    "index.js",
+    "client.js",
+    "cordis.patch.yml",
+    "icon.png",
+    "locale/*.json",
+    "README.md",
+    "README.zh.md",
+    "LICENSE"
+  ]
+}
