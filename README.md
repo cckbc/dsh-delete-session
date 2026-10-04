@@ -46,13 +46,13 @@ It installs through the plugin-manager tool, and asks you for approval when it l
 ### From the Plugins page
 
 1. Open **Plugins** in the DSH sidebar and choose **Add plugin**;
-2. Enter the npm package name `@CCKBC/dsh-delete-session`, or the Git address `github:CCKBC/dsh-delete-session` for the source;
+2. Enter the Git address `github:CCKBC/dsh-delete-session` for the source;
 3. Press **Install**, then **Enable now** (a freshly installed bundle stays switched off) — then **quit the app completely and reopen it**.
 
 ### From the command line (CLI / Web profiles)
 
 ```sh
-dsh plugin --profile web add @CCKBC/dsh-delete-session
+dsh plugin --profile web add github:CCKBC/dsh-delete-session
 # pinning a version is safer: dsh plugin --profile web add github:CCKBC/dsh-delete-session#<commit-sha>
 ```
 
