@@ -10,7 +10,7 @@ Out of the box a session's row menu offers **Pin / Rename / Fork / Archive** —
 
 **Delete session** is appended to the row's `…` menu — the hover trash button on the row is the same action — and to delete several at once there is a trash button above the workspace list. The two ways in, side by side — **left** the bulk button, **right** the row menu with **Delete session** in red at the end:
 
-![Two ways in, side by side. Left: the bulk delete button above the workspace list, showing its Delete sessions in bulk tooltip. Right: the row menu, with Delete session in red at the end](images/01-entries.png)
+![Left: the bulk delete button above the workspace list, showing its Delete sessions in bulk tooltip. Right: the row menu open, with Delete session in red at the end](images/01-entries.png)
 
 The bulk button opens a picker holding every session:
 
